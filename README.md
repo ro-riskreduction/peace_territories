@@ -18,6 +18,7 @@ Given the confidential nature of certain data, protected by the Personal Data Pr
 
 Based on Mexican law (Article 3, Section X of the Law on the Protection of Personal Data in Possession of Obligated Parties of Mexico City) and, in some fields, sensitive personal data (Section XI: health, sexual preference, ethnic origin). Therefore, the public version removes such information, respecting the principles of purpose, loyalty, minimization, and proportionality (Article 9).
 
+
 | Column type | Examples | Public version |
 
 |---|---|---|
