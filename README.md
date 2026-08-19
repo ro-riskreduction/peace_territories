@@ -19,25 +19,18 @@ Given the confidential nature of certain data, protected by the Personal Data Pr
 Based on Mexican law (Article 3, Section X of the Law on the Protection of Personal Data in Possession of Obligated Parties of Mexico City) and, in some fields, sensitive personal data (Section XI: health, sexual preference, ethnic origin). Therefore, the public version removes such information, respecting the principles of purpose, loyalty, minimization, and proportionality (Article 9).
 
 
+## Privacy Rules
+
+The following table summarizes the anonymization strategy.
+
 | Column type | Examples | Public version |
-
 |---|---|---|
-
-| Direct identifiers | name (nombre), respondent (encuestado), interviewer (encuestador), respondent\_signature (firma\_encuestado) | Suppress |
-
-| Address | street (calle), external\_number (numero\_ext), internal\_number (numero\_int) | Suppress |
-
+| Direct identifiers | name (nombre), respondent (encuestado), interviewer (encuestador), respondent_signature (firma_encuestado) | Suppress |
+| Address | street (calle), external_number (numero_ext), internal_number (numero_int) | Suppress |
 | Geolocation | coordinates (coordenadas) | Suppress; keep polygon |
-
-| Free text | observations (observaciones), detail (\*\_detalle), other (\*\_otro) | Suppress |
-
-| Sensitive thematic data | lgbtttq, indigenous\_comunity (comunidad\_originaria), disability (discapacidad), diagnosed\_condition (padecimiento\_diag), pregnant\_women (embarazadas), substances (sustancias) | Keep only as polygon-level aggregates with k ≥ 5 |
-
-| Non-sensitive demographics | age (edad), sex (sexo), education\_level (nivel\_estudios), ocupation\_category (ocupacion\_categoria), marital\_status (estado\_civil), member (integrante) | Keep; evaluate 5-year age bands if k < 5 |
-
-| Household variables | dwelling (vivienda), health (salud), service\_equipment (equipamiento\_de\_servicios), security (seguridad), annexes (anexos) | Aggregate by polygon when detail would expose unique cells |
-
-| Internal household identifier | general\_id (id\_general) | Replace with a different, non-derivable pseudonym |
-
-
+| Free text | observations (observaciones), detail (*_detalle), other (*_otro) | Suppress |
+| Sensitive thematic data | lgbtttq, indigenous_comunity (comunidad_originaria), disability (discapacidad), diagnosed_condition (padecimiento_diag), pregnant_women (embarazadas), substances (sustancias) | Keep only as polygon-level aggregates with k ≥ 5 |
+| Non-sensitive demographics | age (edad), sex (sexo), education_level (nivel_estudios), ocupation_category (ocupacion_categoria), marital_status (estado_civil), member (integrante) | Keep; evaluate 5-year age bands if k < 5 |
+| Household variables | dwelling (vivienda), health (salud), service_equipment (equipamiento_de_servicios), security (seguridad), annexes (anexos) | Aggregate by polygon when detail would expose unique cells |
+| Internal household identifier | general_id (id_general) | Replace with a different, non-derivable pseudonym |
 
