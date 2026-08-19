@@ -4,7 +4,7 @@ In this repository you could find the analysis related with Mexico City Peace te
 
 The analysis is based on data coming from the Participatory Assessment prepared by the Undersecretariat for Territories of Peace and submitted to the Ministry of Comprehensive Risk Management and Civil Protection (SGIRPC) on May 13, 2026 and enriched with data produced by the SGIRPC regarding hazards. 
 
-The original database (DB) was transformed into two DB, one corresponding to Individual Surveys records and second referring to homes. Several new vectors were created through reclassification and spatial analysis using information from the Mexico City Risk Atlas shape files corresponding to the Single Registry of Emergency Situations, updated in December 2025.
+The original database (DB) was transformed into two DB, one corresponding to Individual Surveys records and a second referring to homes. Several new vectors were created through reclassification and spatial analysis using information from the Mexico City Risk Atlas shape files corresponding for example to the Single Registry of Emergency Situations, updated in December 2025.
 
 Responsible researchers: Removed for anonymized review.
 
