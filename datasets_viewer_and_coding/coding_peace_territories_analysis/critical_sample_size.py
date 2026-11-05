@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 
 df_home = pd.read_csv(
     "df_vector_hogar_160726_publica.csv",
+    sep=";",
     dayfirst=True,
     encoding="latin1",
     low_memory=False

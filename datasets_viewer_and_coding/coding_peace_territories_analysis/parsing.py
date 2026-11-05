@@ -77,14 +77,14 @@ dtypes_home = {
     "cantidad_personas": "string",      # ⚠ sometimes ###
     "hacinamiento": "string",  
     "hacinamiento_cat": "string", #decimals + ###
-    "cantidad_dormitorios": "string",   # ⚠ ###
+    "cant_dormi": "string",   # ⚠ ####
     "cantidad_menores_trabajando": "string",
     "cantidad_mayores65_trabajando": "string"
 }
 
 df_home = pd.read_csv(
     "df_vector_hogar_160726_publica.csv",
-    #sep= ";",
+    sep= ";",
     dtype=dtypes_home,
     dayfirst=True,
     encoding="latin1",
@@ -142,6 +142,102 @@ df_ind = pd.read_csv(
     encoding="latin1",   # ✅ fix Unicode error
     low_memory=False     # ✅ suppress dtype warning
 )
+
+#############################################################
+#Definition for normalizing
+def normalize_text(series):
+
+    return (
+        series
+        .astype("string")
+        .str.strip()
+        .replace({
+            "SÃ­": "SI",
+            "Sí": "SI",
+            "si": "SI",
+            "Si": "SI",
+
+            "No": "NO",
+            "no": "NO",
+
+            "mucho": "MUCHO",
+            "poco": "POCO",
+            "nada": "NADA",
+
+            "trabajo": "TRABAJO",
+            "pension": "PENSION",
+            "programas_sociales": "PROGRAMAS_SOCIALES",
+            "otro": "OTRO",
+
+            "casado": "CASADO",
+            "soltero": "SOLTERO",
+            "divorciado": "DIVORCIADO",
+            "union": "UNION",
+            "viudo": "VIUDO",
+
+            "casa": "CASA",
+            "departamento": "DEPARTAMENTO",
+            "cuarto": "CUARTO",
+            "asentamiento": "ASENTAMIENTO",
+
+            "rentada": "RENTADA",
+            "propia": "PROPIA",
+            "prestada": "PRESTADA",
+            "otra": "OTRA",
+
+            "60 y mÃ¡s": "60 Y MAS",
+            "60 y más": "60 Y MAS",
+        })
+    )
+#######################################################
+#Normalization
+
+problem_columns_ind = [
+
+    "tipo_de_discapacidad",
+    "frecuencia_partip_comunitaria",
+    "participo_act_vecinales",
+    "ingreso_mensual",
+    "hubo_act_vecinales_ultimo_anio",
+    "grupo_etario",
+    "fuente_ingreso",
+    "tiene_smartphone",
+    "tiene_empleo",
+    "realiza_labores_cuidados",
+    "se_siente_parte_comunidad",
+    "le_gustaria_participar_en_act_vecinales",
+    "estado_civil",
+    "sexo",
+    "nivel_estudios",
+    "discapacidad_motriz",
+    "sintomas_depresion_ansiedad"
+]
+
+for col in problem_columns_ind:
+
+    if col in df_ind.columns:
+        df_ind[col] = normalize_text(df_ind[col])
+
+
+problem_columns_home = [
+
+    "riesgo_comunidadindigena",
+    "existen_botones_panico",
+    "tipo_tenencia",
+    "tipo_vivienda",
+    "mayores65_trabajando",
+    "menores_trabajando",
+    "agua_acceso",
+    "electricidad_acceso",
+    "drenaje_acceso",
+    "gas_acceso",
+    "botones_panico_usado"
+]
+
+for col in problem_columns_home:
+
+    if col in df_home.columns:
+        df_home[col] = normalize_text(df_home[col])
 
 ###################################################
 # We are moving to create the arrays from the relevant vectors from our datasets while encoding
@@ -347,8 +443,9 @@ hacinamiento_cat_array = (
 )
 
 cantidad_dormitorios_array = (
-    df_home["cantidad_dormitorios"]
+    df_home["cant_dormi"]
     .map({
+        "0": 0,
         "1": 1,
         "2": 2,
         "3": 3,
@@ -370,6 +467,7 @@ cantidad_dormitorios_array = (
         "19": 19,
         "20": 20,
         "21": 21,
+        "22": 22
     })
     .to_numpy()
 )
@@ -488,9 +586,10 @@ df_home["agua_servicios_percepcion"]
 electricidad_acceso_array = (
     df_home["electricidad_acceso"]
     .map({
-    	"SI": 1,
-    	"NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
  
@@ -519,9 +618,10 @@ electricidad_percepcion_array = (
 gas_acceso_array = (
     df_home["gas_acceso"]
     .map({
-    	"SI": 1,
-    	"NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
  
@@ -552,9 +652,10 @@ gas_percepcion_array = (
 drenaje_acceso_array = (
 	df_home["drenaje_acceso"]
     .map({
-     	"SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
  
@@ -586,18 +687,20 @@ basura_frecuencia_array = (
 existen_botones_panico_array = (
     df_home["existen_botones_panico"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
 botones_panico_usado_array = (
     df_home["botones_panico_usado"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
@@ -615,9 +718,10 @@ deportivos_nivelseguridad_array = (
 deportivos_serviciosadecuados_array = (
     df_home["deportivos_serviciosadecuados"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
@@ -653,9 +757,10 @@ albergues_nivelseguridad_array = (
 serviciosadecuados_albergues_array = (
     df_home["serviciosadecuados_albergues"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
@@ -704,9 +809,10 @@ gimnasios_nivelseguridad_array = (
 gimnasios_serviciosadecuados_array = (
     df_home["gimnasios_serviciosadecuados"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
@@ -750,20 +856,22 @@ festivities_time_array = (
 riesgo_comunidadindigena_array = (
  df_home["riesgo_comunidadindigena"]
  .map({
-        "SI": 1,
-        "NO": 0
-    })
- .to_numpy()
- )
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
+    .to_numpy()
+)
 
 indigena_seguridad_violencia_array = (
  df_home["indigena_seguridad_violencia"]
  .map({
-        "SI": 1,
-        "NO": 0
-    })
- .to_numpy()
- )
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
+    .to_numpy()
+)
 
 indigena_seguridad_zonas_riesgo_array = (
 df_home["indigena_seguridad_zonas_riesgo"]
@@ -780,11 +888,12 @@ df_home["indigena_seguridad_zonas_riesgo"]
 jovenes_trabajo_estudio_array = (
  df_home["jovenes_trabajo_estudio"]
  .map({
-        "SI": 1,
-        "NO": 0
-    })
- .to_numpy()
- )
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
+    .to_numpy()
+)
 
 zonas_riesgo_para_jovenes_array = (
  df_home["zonas_riesgo_para_jovenes"]
@@ -802,20 +911,22 @@ zonas_riesgo_para_jovenes_array = (
 jovenes_seguridad_violencia_array = (
  df_home["jovenes_seguridad_violencia"]
  .map({
-        "SI": 1,
-        "NO": 0
-    })
- .to_numpy()
- )
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
+    .to_numpy()
+)
 
 jefa_de_hogar_array = (
  df_home["jefa_de_hogar"]
  .map({
-        "SI": 1,
-        "NO": 0
-    })
- .to_numpy()
- )
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
+    .to_numpy()
+)
 
 zonas_riesgo_para_mujeres_array = (
  df_home["zonas_riesgo_para_mujeres"]
@@ -833,11 +944,12 @@ zonas_riesgo_para_mujeres_array = (
 mujeres_seguridad_violencia_array = (
  df_home["mujeres_seguridad_violencia"]
  .map({
-        "SI": 1,
-        "NO": 0
-    })
- .to_numpy()
- )
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
+    .to_numpy()
+)
 
 riesgo_precipitacion_array = (
  df_home["riesgo_precipitacion"]
@@ -980,10 +1092,11 @@ Intensidad_recurrencia_encharcamiento_array = (
 menores_trabajando_array = (
 	df_home["menores_trabajando"]
 	.map({
-    	"SI": 1,
-    	"NO": 0 
- 	})
-.to_numpy()
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
+    .to_numpy()
 )
 
 cantidad_menores_trabajando_array = (
@@ -1015,10 +1128,11 @@ cantidad_menores_trabajando_array = (
 mayores65_trabajando_array = (
 	df_home["mayores65_trabajando"]
 	.map({
-    	"SI": 1,
-    	"NO": 0
-	})
-	.to_numpy()
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
+    .to_numpy()
 )
 
 cantidad_mayores65_trabajando_array = (
@@ -1074,10 +1188,11 @@ PFE_vulnerabilidad_hidrometeorologica_array = (
 agua_acceso_array = (
 	df_home["agua_acceso"]
 	.map({
-    	"SI": 1,
-    	"NO": 0    	
-    })
-	.to_numpy()
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
+    .to_numpy()
 )
  
 agua_frecuencia_array = (
@@ -1116,7 +1231,7 @@ agua_servicios_percepcion_array = (
 	.to_numpy()
 )
 
-###############################################################################################################
+####################################################################################################################################################################################
 ###ind_array###
 
 edad_array= (
@@ -1233,14 +1348,14 @@ edad_array= (
 )
 
 grupo_etario_array = (
-df_ind["grupo_etario"]
-.map({
-        "0-5 primera infancia": 1,
-        "12-17 adolescencia": 2,
-        "18-29 juventud": 3,
-        "30-59 adultez": 4,
-        "6-11 infancia": 5,
-        "60 y más": 6
+    df_ind["grupo_etario"]
+    .map({
+        "0-5 PRIMERA INFANCIA": 1,
+        "12-17 ADOLESCENCIA": 2,
+        "18-29 JUVENTUD": 3,
+        "30-59 ADULTEZ": 4,
+        "6-11 INFANCIA": 5,
+        "60 Y MAS": 6
     })
     .to_numpy()
 )
@@ -1320,9 +1435,10 @@ estado_civil_array = (
 pertenece_comunidad_originaria_array = (
     df_ind["pertenece_comunidad_originaria"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
@@ -1344,16 +1460,24 @@ tipo_de_discapacidad_array = (
 discapacidad_motriz_array = (
     df_ind["discapacidad_motriz"]
     .map({
-        "Sí": 1,
-        "No": 0
+        "SI": 1,
+        "NO": 0,
+        "SIN DATO": 0
     })
     .to_numpy()
 )
 
-sintomas_depresion_ansiedad_array = (    df_ind["sintomas_depresion_ansiedad"]
+#######################################################################################
+
+#discapacidad_motriz_array = df_ind["discapacidad_motriz"].dropna()
+
+########################################################################################
+
+sintomas_depresion_ansiedad_array = (    
+    df_ind["sintomas_depresion_ansiedad"]
     .map({
-       "si": 1,
-       "no": 0
+    "SI": 1,
+    "NO": 0
     })
     .to_numpy()
 )
@@ -1373,9 +1497,10 @@ ingreso_mensual_array = (
 tiene_empleo_array = (    
     df_ind["tiene_empleo"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
@@ -1393,8 +1518,9 @@ fuente_ingreso_array = (
 realiza_labores_cuidados_array = (
     df_ind["realiza_labores_cuidados"]
     .map({
+        "NO": 0,
         "SI": 1,
-        "NO": 0
+        "PNC": np.nan
     })
     .to_numpy()
 )
@@ -1412,9 +1538,10 @@ frecuencia_partip_comunitaria_array = (
 tiene_smartphone_array = (
     df_ind["tiene_smartphone"]
     .map({
-        "SI": 1,
-        "NO": 0 
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
@@ -1436,36 +1563,40 @@ transporte_publico_que_utiliza_array = (
 hubo_act_vecinales_ultimo_anio_array = (
     df_ind["hubo_act_vecinales_ultimo_anio"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
 participo_act_vecinales_array = (
     df_ind["participo_act_vecinales"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
 le_gustaria_participar_en_act_vecinales_array = (
     df_ind["le_gustaria_participar_en_act_vecinales"]
     .map({
-        "SI": 1,
-        "NO": 0
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
 se_siente_parte_comunidad_array = (
     df_ind["se_siente_parte_comunidad"]
     .map({
-        "SI": 1,
-        "NO": 0,
-    })
+    "SI": 1,
+    "NO": 0,
+    "PNC": np.nan
+})
     .to_numpy()
 )
 
@@ -1535,13 +1666,13 @@ vulnerability=  np.vstack (( tipo_de_discapacidad_array, discapacidad_motriz_arr
 
 socioeconomic=  np.vstack (( ingreso_mensual_array, fuente_ingreso_array, tiene_empleo_array) ).T
 
-caregivin=  np.vstack (( realiza_labores_cuidados_array) ).T
+caregivin = realiza_labores_cuidados_array.reshape(-1, 1)
 
 community=  np.vstack (( frecuencia_partip_comunitaria_array, hubo_act_vecinales_ultimo_anio_array, participo_act_vecinales_array, le_gustaria_participar_en_act_vecinales_array, se_siente_parte_comunidad_array) ).T
 
-technology=  np.vstack (( tiene_smartphone_array) ).T
+technology= tiene_smartphone_array.reshape(-1, 1)
 
-transportation=  np.vstack (( transporte_publico_que_utiliza_array) ).T
+transportation= transporte_publico_que_utiliza_array.reshape(-1, 1)
 
 ###############################################################################################################
 

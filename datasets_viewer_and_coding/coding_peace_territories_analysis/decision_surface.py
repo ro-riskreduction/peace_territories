@@ -7,15 +7,93 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
 from matplotlib.colors import ListedColormap
 
+# retrieve the dataframes
+
+dtypes_home = {
+    # ✅ identifiers
+    "id_general": "Int64",
+
+    # ✅ categorical / text (due to mixed values like PNC, N/A, ###)
+    "nombre_alcaldia": "string",
+    "nombre_territorio_paz": "string",
+    "nombre_poligono_paz": "string",
+    "tipo_vivienda": "string",
+    "tipo_tenencia": "string",
+    "animal_compania": "string",
+    "menores_sin_estudiar": "string",
+    "motivo_sin_estudiar": "string",
+    "otro_motivo_sin_estudiar": "string",
+    "menores_trabajando": "string",
+    "mayores65_trabajando": "string",
+    "PFE_vulnerabilidad_geologica": "string",
+    "PFE_vulnerabilidad_hidrometeorologica": "string",
+    "agua_acceso": "string",
+    "agua_frecuencia": "string",
+    "agua_metodo_acceso": "string",
+    "agua_servicios_percepcion": "string",
+    "electricidad_acceso": "string",
+    "electricidad_tipo": "string",
+    "electricidad_percepcion": "string",
+    "gas_acceso": "string",
+    "gas_tipo_toma": "string",
+    "gas_percepcion": "string",
+    "drenaje_acceso": "string",
+    "drenaje_frecuencia_fallas": "string",
+    "basura_frecuencia": "string",
+    "existen_botones_panico": "string",
+    "botones_panico_usado": "string",
+    "deportivos_nivelseguridad": "string",
+    "deportivos_serviciosadecuados": "string",
+    "tipo_albergue": "string",
+    "estado_de_instalaciones_albergues": "string",
+    "albergues_nivelseguridad": "string",
+    "serviciosadecuados_albergues": "string",
+    "tiempotraslado_albergues": "string",
+    "gimnasios_nivelseguridad": "string",
+    "gimnasios_serviciosadecuados": "string",
+    "festividad_nombre": "string",
+    "festividades_temporalidad": "string",
+    "riesgo_comunidadindigena": "string",
+    "indigena_seguridad_violencia": "string",
+    "indigena_seguridad_zonas_riesgo": "string",
+    "jovenes_trabajo_estudio": "string",
+    "zonas_riesgo_para_jovenes": "string",
+    "jovenes_seguridad_violencia": "string",
+    "jefa_de_hogar": "string",
+    "zonas_riesgo_para_mujeres": "string",
+    "mujeres_seguridad_violencia": "string",
+    "riesgo_precipitacion": "string",
+    "riesgo_Inundacion": "string",
+    "riesgo_tormenta_electrica": "string",
+    "riesgo_granizo": "string",
+    "riesgo_tem_max": "string",
+    "riesgo_tem_min": "string",
+    "riesgo_nevada": "string",
+    "riesgo_susceptibilidad_ladera": "string",
+    "vul_social": "string",
+    "vulnerabilidad_social_FR": "string",
+    "riesgo_sismo": "string",
+    "riesgo_integrado": "string",
+    "Intensidad_recurrencia_encharcamiento": "string",
+
+    # numeric but safe 
+    "anios_residencia": "string",   # ⚠ contains numeric but keep as string (safe)
+    "cantidad_personas": "string",      # ⚠ sometimes ###
+    "hacinamiento": "string",  
+    "hacinamiento_cat": "string", #decimals + ###
+    "cant_dormi": "string",   # ⚠ ####
+    "cantidad_menores_trabajando": "string",
+    "cantidad_mayores65_trabajando": "string"
+}
+
 df_home = pd.read_csv(
     "df_vector_hogar_160726_publica.csv",
-    #sep= ";",
-    #dtype=dtypes_home,
-    dayfirst=True,
+    sep=";",
+    decimal=",",
+    dtype=dtypes_home,
     encoding="latin1",
     low_memory=False
 )
-
 ##################################################################################################################
 #Selecting just the indexes
 classification_df = pd.DataFrame({
@@ -27,6 +105,40 @@ classification_df = pd.DataFrame({
         df_home["porcentaje_Intersectionality_index"]
 
 })
+####################################################################################################
+#changing to numeric
+#temp = pd.to_numeric(
+#    classification_df["criticality"],
+#    errors="coerce"
+#)
+
+#print(
+#    "Criticality NaNs:",
+#    temp.isna().sum()
+#)
+
+#classification_df["criticality"] = temp
+
+
+
+#temp = pd.to_numeric(
+#    classification_df["intersectionality"],
+#    errors="coerce"
+#)
+
+#print(
+#    "intersectionality NaNs:",
+#    temp.isna().sum()
+#)
+
+#classification_df["intersectionality"] = temp
+
+#########################################################################################
+#removing na
+classification_df = classification_df.dropna()
+
+
+
 #########################################################################################################
 def vulnerability_class(x):
 
@@ -46,6 +158,7 @@ classification_df["category"] = (
     classification_df["criticality"]
     .apply(vulnerability_class)
 )
+########################################################################
 
 #####################################################################################
 #Features
